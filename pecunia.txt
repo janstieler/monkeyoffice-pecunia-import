@@ -46,7 +46,7 @@ set Vorlage_Text to Spalte_004
 set Vorlage_Betrag to FTextToNumber(Spalte_002)
 
 ' Notizen (Pecunia Kategorien und Notizen kombiniert)
-set Vorlage_Notizen to Spalte_006 + " / " + Spalte_005
+set Vorlage_Notizen to Spalte_005 + " / " + Spalte_006
 
 ' ---------------------------------------------------------------------------------
 ' Optional: Belegvervollständigung
