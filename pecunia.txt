@@ -1,0 +1,69 @@
+
+' ---------------------------------------------------------------------------------
+' Importdefinition für Pecunia-Umsatzdateien
+'    Importeinstellungen:
+'    Quelle                     : Textdatei (*)
+'    Trennzeichen für Felder    : Semikolon
+'    Trennzeichen für Datensätze: LF
+'    Zeichensatz für            : UTF-8
+'    Text in Anführungszeichen  : keine
+' ---------------------------------------------------------------------------------
+
+' Aktionen nur im ersten Durchlauf ausführen: Variablen deklarieren
+if ( NOT HasVariable("zeile") )
+dim zeile as number
+endif
+
+' Die Umsatzdaten beginnen erst ab Zeile 1, die Zeile davor verwerfen
+set zeile to zeile + 1
+if ( zeile < 1 )
+set Vorlage_Zeile_OK to FALSE
+exit
+endif
+
+' Abbrechen, wenn nicht mindestens 5 Felder in Importdatei vorhanden sind
+if ( NOT HasVariable("Spalte_005") )
+beep
+msgBox("Fehler beim Lesen der Pecunia-Exportatei (Ungültiges Datensatzformat – nicht genügend Felder vorhanden)!")
+set Vorlage_Import_OK to FALSE
+exit
+endif
+
+' ---------------------------------------------------------------------------------
+' Importfelder den Datenfeldern zuordnen
+' ---------------------------------------------------------------------------------
+
+' Datum (Wertstellungdatum verwenden)
+set Vorlage_Datum to TextToDate(Spalte_001)
+
+' Belegnummer
+'set Vorlage_BelegNr to Spalte_003
+
+' Verwendungszweck
+set Vorlage_Text to Spalte_004
+
+' Betrag
+set Vorlage_Betrag to FTextToNumber(Spalte_002)
+
+' Notizen
+set Vorlage_Notizen to Spalte_005
+
+' ---------------------------------------------------------------------------------
+' Optional: Belegvervollständigung
+' ---------------------------------------------------------------------------------
+
+if ( FIRMA_ID = 3 ) 'Ihre Firmen-ID 
+
+' Debitoren-/Kreditorenkonto bei gefundenem OP zuweisen
+set Vorlage_Konto to GetKontoDebitor(Vorlage_Text, Vorlage_Betrag)
+set Vorlage_Konto to IfThen(Vorlage_Konto = "", GetKontoKreditor(Vorlage_Text, Vorlage_Betrag), Vorlage_Konto)
+set Vorlage_BelegNr to IfThen(Vorlage_Betrag < 0, "Ausgabe", "Einnahme")
+
+'Beispiel aus dem Prosaldo Handbuch
+'set Vorlage_Konto to IfThen(PatternCount(Vorlage_Text, "Stadtwerke") > 0, "4240", Vorlage_Konto)
+'set Vorlage_Konto to IfThen(PatternCount(Vorlage_Text, "Reinigung") > 0, "4250", Vorlage_Konto)
+'if ( PatternCount(Vorlage_Text, "Hausmeister") > 0 )
+'set Vorlage_Konto to "4280"
+'set Vorlage_Notizen to "Abrechnung prüfen"
+'endif
+endif
