@@ -5,7 +5,7 @@
 '    Quelle                     : Textdatei (*)
 '    Trennzeichen für Felder    : Semikolon
 '    Trennzeichen für Datensätze: LF
-'    Zeichensatz für            : UTF-8
+'    Zeichensatz für            : UTF_8
 '    Text in Anführungszeichen  : keine
 ' ---------------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ endif
 ' Abbrechen, wenn nicht mindestens 5 Felder in Importdatei vorhanden sind
 if ( NOT HasVariable("Spalte_005") )
 beep
-msgBox("Fehler beim Lesen der Pecunia-Exportatei (Ungültiges Datensatzformat – nicht genügend Felder vorhanden)!")
+msgBox("Fehler beim Lesen der Pecunia-Exportatei (Ungültiges Datensatzformat)!")
 set Vorlage_Import_OK to FALSE
 exit
 endif
@@ -40,26 +40,25 @@ set Vorlage_Datum to TextToDate(Spalte_001)
 'set Vorlage_BelegNr to Spalte_003
 
 ' Verwendungszweck
-set Vorlage_Text to Spalte_004
+set Vorlage_Text to Spalte_003
 
 ' Betrag
 set Vorlage_Betrag to FTextToNumber(Spalte_002)
 
 ' Notizen (Pecunia Kategorien und Notizen kombiniert)
-set Vorlage_Notizen to Spalte_005 + " / " + Spalte_006
+set Vorlage_Notizen to Spalte_004 + " / " + Spalte_005
 
 ' ---------------------------------------------------------------------------------
 ' Optional: Belegvervollständigung
 ' ---------------------------------------------------------------------------------
 
-if ( FIRMA_ID = 3 ) 'Ihre Firmen-ID 
+if ( FIRMA_ID = 3 )
 
 ' Debitoren-/Kreditorenkonto bei gefundenem OP zuweisen
 set Vorlage_Konto to GetKontoDebitor(Vorlage_Text, Vorlage_Betrag)
 set Vorlage_Konto to IfThen(Vorlage_Konto = "", GetKontoKreditor(Vorlage_Text, Vorlage_Betrag), Vorlage_Konto)
 set Vorlage_BelegNr to IfThen(Vorlage_Betrag < 0, "Ausgabe", "Einnahme")
 
-'Beispiel aus dem Prosaldo Handbuch
 'set Vorlage_Konto to IfThen(PatternCount(Vorlage_Text, "Stadtwerke") > 0, "4240", Vorlage_Konto)
 'set Vorlage_Konto to IfThen(PatternCount(Vorlage_Text, "Reinigung") > 0, "4250", Vorlage_Konto)
 'if ( PatternCount(Vorlage_Text, "Hausmeister") > 0 )
