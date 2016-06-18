@@ -11,4 +11,4 @@ ATTENTION: There are some special situations for the CSV-export.
 The order of the CSV settings in Pecunia are not the same like in the exportfile.
 And the categories in the settings are the tags not the categories from the main left window.
 
-Please open your CSV file and proof if the columns are teh same like in that script.
+Please open your CSV file and proof if the columns are the same like in that script.
